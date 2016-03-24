@@ -29,6 +29,7 @@ E_in = 1.0
 
 r_i = sqrt(0.95165)
 r_e = sqrt(0.25)
+#r_e = sqrt(0.5)
 #r_e = sqrt(0.98624)
 
 t_i = sqrt(1-r_i**2)
@@ -129,6 +130,9 @@ pylab.xticks(fontsize=10)
 ax3 = ax2.twiny()
 ax3.xaxis.tick_bottom()
 ax3.xaxis.set_label_position('bottom')
+
+# Don't forget to set the limits to be the same for both axes!
+ax3.set_xlim(ax2.get_xlim())
 
 # Position and label the tickmarks for the new axis
 # note the map() routine - the labels (string values) are given as a list, but we want to do some math on the tick postions which needs an array
