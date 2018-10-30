@@ -1,0 +1,129 @@
+#! /usr/bin/env python
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+from numpy import *
+from MCIV_tools import *
+import matplotlib
+matplotlib.use("Agg")
+import pylab
+matplotlib.rcParams.update({'savefig.dpi':250})
+from matplotlib.mlab import *
+from scipy.optimize import leastsq
+from scipy.optimize import curve_fit
+from scipy.optimize import fmin
+
+## Parametric function: 'v' is the vector of parameters, 'x' the independent varible
+## This is a normal distribution: amplitude v[0], mean v[1], stddev v[2]
+def fp(v,x):
+    return v[0]/x**v[1]
+
+## Error function we seek to minimize
+## v are the guessed parameters, x is the independent variable, y is the data
+def e1(v,x,y):
+    return fp(v,x)-y
+
+## Error function we seek to minimize
+## v are the guessed parameters, x is the independent variable, y is the data
+# fmin needs a single number as output, not an array of errors
+def e2(v,x,y):
+    return abs(fp(v,x)-y).sum()
+
+# L1 strain
+data1 = genfromtxt('L1_S5_ASD_2May2006_coarse.txt')
+#data1 = genfromtxt('L1_S5_ASD_2May2006.txt')
+L1_freq1_S5 = data1[:,0]
+L1_S5_pre = data1[:,1]
+
+data2 = genfromtxt('L1_S5_ASD_9May2006_coarse.txt')
+#data2 = genfromtxt('L1_S5_ASD_9May2006.txt')
+L1_freq2_S5 = data2[:,0]
+L1_S5_post = data2[:,1]
+
+data3 = genfromtxt('L1_S5_ASD_22Feb2006_coarse.txt')
+#data3 = genfromtxt('L1_S5_ASD_22Feb2006.txt')
+L1_freq3_S5 = data3[:,0]
+L1_S5_Feb = data3[:,1]
+
+i1 = argmin(abs(L1_freq1_S5-65))
+i2 = argmin(abs(L1_freq1_S5-90))
+
+x1 = sqrt(L1_S5_Feb**2-L1_S5_post**2)
+x2 = sqrt(L1_S5_pre**2-L1_S5_post**2)
+
+v0 = array([3.9e-18, 2.5])
+p = fmin(e2, v0, args=(L1_freq1_S5[i1:i2], x1[i1:i2]))
+
+print p
+
+"""
+print x1[i1:i2]
+pfit, fitCov = curve_fit(fp, L1_freq1_S5[i1:i2], x1[i1:i2], [3.9e-18, 2.5])
+print pfit
+
+## Initial parameter value
+
+
+## Fitting
+v1, success = leastsq(e, v0, args=(L1_freq1_S5[i1:i2], x1[i1:i2]), maxfev=1000000)
+print v1
+
+y1 = fp(v0, L1_freq1_S5)
+
+v2, success = leastsq(e, v0, args=(L1_freq1_S5[i1:i2], x2[i1:i2]), maxfev=1000000)
+print v2
+y2 = fp(v0, L1_freq1_S5)
+"""
+
+y1 = 5.3e-19/(1+L1_freq2_S5**2)
+y2 = 2.7e-17/(1+L1_freq2_S5**3)
+y3 = 3.9e-18/(1+L1_freq2_S5**2.5)
+
+
+fignum=0
+
+fignum+=1
+pylab.figure(fignum)
+
+ax1 = pylab.subplot(2,1,1)
+
+#pylab.loglog(L1_freq2_S5,L1_S5_Feb,'y-',linewidth=1.0,label='L1 Before Vent (22Feb2006')
+pylab.loglog(L1_freq1_S5,L1_S5_pre,'g-',linewidth=1.0,label='L1 Before Vent (2May2006)')
+pylab.loglog(L1_freq2_S5,L1_S5_post,'r-',linewidth=1.0,label='L1 After Vent (9May2006),\nViton EQ stop retracted')
+
+pylab.loglog(L1_freq2_S5,4.5e-18/(1+L1_freq2_S5**2.5),'k--',linewidth=1.4,label='1/f^2.5')
+
+pylab.xticks(visible=False)
+pylab.ylim(1e-23,1e-21)
+pylab.grid(True, which='both', linestyle=':',alpha=0.8)
+pylab.ylabel('Strain ASD [1/rt(Hz)]',fontsize=12)
+pylab.xlim(30,300)
+pylab.yticks(fontsize=10)
+ax1.get_yaxis().set_label_coords(-0.08,0.5)
+pylab.legend(loc=1,fancybox=True,prop={'size':10},bbox_to_anchor=[1.08,1])
+#pylab.title('Charge migration noise (?) at L1 - May 2006',fontsize=12)
+pylab.title('Charge migration noise (?) at L1 - May 2006 - Noisy Data',fontsize=12)
+
+ax2 = pylab.subplot(2,1,2)
+
+pylab.plot(L1_freq1_S5,x2,'c-',linewidth=1.0,label='Subtraction')
+
+pylab.loglog(L1_freq2_S5, y1, 'b--',linewidth=1.4,label='1/f^2')
+pylab.loglog(L1_freq2_S5, y3, 'k--',linewidth=1.4,label='1/f^2.5')
+pylab.loglog(L1_freq2_S5, y2, 'r--',linewidth=1.4,label='1/f^3')
+
+pylab.grid(True, which='both', linestyle=':',alpha=0.8)
+pylab.xticks(fontsize=10)
+pylab.yticks(fontsize=10)
+pylab.xlim(30,300)
+pylab.ylim(1e-23,1e-21)
+pylab.xlabel('Frequency [Hz]',fontsize=12)
+pylab.ylabel('Strain ASD [1/rt(Hz)]',fontsize=12)
+pylab.legend(loc=1,fancybox=True,prop={'size':10})
+
+ax1.get_yaxis().set_label_coords(-0.08,0.5)
+
+pylab.savefig('/home/dhoak/public_html/PSD/S5_ASD_charging.png')
+pylab.close
+
+
