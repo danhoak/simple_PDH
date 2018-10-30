@@ -132,11 +132,11 @@ pylab.title('Charge migration noise at L1 - May 2006',fontsize=12)
 
 ax2 = pylab.subplot(2,1,2)
 
-#pylab.plot(fit_freq1,fit_x1,'c-',linewidth=0.8,label='Subtraction')
+#pylab.plot(fit_freq1,fit_x1,'c-',linewidth=0.8,label='Subtraction (feb22-May9)')
 #pylab.plot(fit_freq1[a1:b1],fit_x1[a1:b1],'m.',markersize=4,label='Subtraction - data for fit')
 #pylab.loglog(freq, yfit1, 'k--',linewidth=1.4,label='fit, index='+str(n1))
 
-pylab.plot(fit_freq2,fit_x2,'c-',linewidth=0.8,label='Subtraction')
+pylab.plot(fit_freq2,fit_x2,'c-',linewidth=0.8,label='Subtraction (May2-May9)')
 pylab.plot(fit_freq2[a2:b2],fit_x2[a2:b2],'m.',markersize=4,label='Subtraction - data for fit')
 pylab.loglog(freq, yfit2, 'k--',linewidth=1.4,label='powerlaw fit, index='+str(n2))
 
