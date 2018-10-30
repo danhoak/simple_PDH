@@ -26,6 +26,10 @@ def plaw(f,A,n):
 #seg_start = 830599214 # May  2 2006 10:00
 #seg_start = 831186014 # May  9 2006 05:00
 seg_start = 824622494 # Feb 22 2006 05:48
+
+
+# the 'coarse' data files used only ~300 seconds of data (I forget exactly how much),
+# the other data files have 1200 seconds of data and so have less noise
 duration = 1200
 Fs = 16384
 chans = 'L1:LSC-STRAIN'
