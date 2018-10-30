@@ -16,7 +16,7 @@ from uncertainties import ufloat
 
 # power law function to fit
 def plaw(f,A,n):
-    return A/(1+f**n)
+    return A/f**n
 
 
 # load the data
@@ -94,8 +94,8 @@ n2 = ufloat(pfit2[1],perr2[1])
 print 'Feb22-May9:', n1
 print 'May2-May9:', n2
 
-yfit1 = plaw(freq, pfit1[0], pfit1[1])
-yfit2 = plaw(freq, pfit2[0], pfit2[1])
+yfit1 = plaw(freq[1:], pfit1[0], pfit1[1])
+yfit2 = plaw(freq[1:], pfit2[0], pfit2[1])
 
 
 # by-hand guesses
@@ -134,11 +134,11 @@ ax2 = pylab.subplot(2,1,2)
 
 #pylab.plot(fit_freq1,fit_x1,'c-',linewidth=0.8,label='Subtraction (feb22-May9)')
 #pylab.plot(fit_freq1[a1:b1],fit_x1[a1:b1],'m.',markersize=4,label='Subtraction - data for fit')
-#pylab.loglog(freq, yfit1, 'k--',linewidth=1.4,label='fit, index='+str(n1))
+#pylab.loglog(freq[1:], yfit1, 'k--',linewidth=1.4,label='fit, index='+str(n1))
 
 pylab.plot(fit_freq2,fit_x2,'c-',linewidth=0.8,label='Subtraction (May2-May9)')
 pylab.plot(fit_freq2[a2:b2],fit_x2[a2:b2],'m.',markersize=4,label='Subtraction - data for fit')
-pylab.loglog(freq, yfit2, 'k--',linewidth=1.4,label='powerlaw fit, index='+str(n2))
+pylab.loglog(freq[1:], yfit2, 'k--',linewidth=1.4,label='powerlaw fit, index='+str(n2))
 
 #pylab.loglog(freq, y1, 'b--',linewidth=1.4,label='1/f^2')
 #pylab.loglog(freq, y3, 'k--',linewidth=1.4,label='1/f^2.5')
